@@ -1,34 +1,37 @@
-import React, { useState } from 'react';
-import { StyleSheet, Button, Alert, Modal, Text, View, Dimensions } from 'react-native';
-import {
-  LineChart,
-  BarChart,
-  PieChart,
-  ProgressChart,
-  ContributionGraph,
-  StackedBarChart
-} from "react-native-chart-kit";
+import React, { useState, useEffect, useContext } from 'react';
+import { useFocusEffect } from '@react-navigation/native';
+import { StyleSheet, Button, Text, View, Dimensions } from 'react-native';
+import { LineChart } from "react-native-chart-kit";
+import { getUserInfo } from "../requests/index"
+import {Context} from '../context/Store'
+import {Actions} from '../context/Reducer'
 
 const HomeScreen = ({ navigation }) => {
-  const [modalVisible, setModalVisible] = useState(false);
+  const [state, dispatch] = useContext(Context);
+
+  let balance = 0
+
+  if (state.user && state.user.balance){
+    balance = state.user.balance
+  }
+
+  const getUser = async () => {
+    const getUserInfoResponse = await getUserInfo(state.username)
+    const {data} = getUserInfoResponse
+    dispatch({type: Actions.GET_USER_INFO, payload: data.data})
+  }
+
+  useFocusEffect(() => {
+      getUser()      
+    }, []);
+
+
   return (
     <View style={styles.container}>
-      <View style={{marginTop: 0, justifyContent: "center"}}>
-            <Text style={{fontSize: 18, color: '#393b3a'}}>BALANCE</Text>
-        </View>
-        <View style={{marginTop: 20, justifyContent: "center", marginBottom: 15}}>
-            <Text style={{fontSize: 30, color: '#393b3a'}}>20000000 CLP</Text>
-        </View>
-        {/* <View style={{marginTop: 20, justifyContent: "center"}}>
-      <Text>Ganancia Diaria: 11000 CLP</Text>
+      <View style={{marginTop: 0, justifyContent: "center", marginBottom: 15}}>
+          <Text style={{fontSize: 18, color: '#393b3a', fontFamily: 'Inter_900Black'}}>{`BALANCE: ${balance} CLP`}</Text>
       </View>
-      <View style={{marginTop: 20, justifyContent: "center"}}>
-      <Text>Ganancia Mensual: 300000 CLP</Text>
-        </View>
-        <View style={{marginTop: 20, justifyContent: "center", marginBottom: 20}}>
-        <Text>Ganancia Anual: 4000000 CLP</Text>
-        </View> */}
-        <View>
+    <View>
 
   <LineChart
     data={{
@@ -76,27 +79,11 @@ const HomeScreen = ({ navigation }) => {
 </View>
 
       <View style={{marginTop: 30, width: 300}}>
-            <Button color="#7f72fe" onPress={() => navigation.navigate('Data')} title="Depositar"/>
+            <Button color="#7f72fe" onPress={() => navigation.navigate('Deposit')} title="Depositar"/>
       </View>
       <View style={{marginTop: 30, width: 300}}>
-            <Button color="#febf72" onPress={() => navigation.navigate('Data')} title="Retirar"/>
+            <Button color="#febf72" onPress={() => navigation.navigate('Withdraw')} title="Retirar"/>
       </View>
-      {/* <Modal
-        animationType="slide"
-        transparent={false}
-        visible={modalVisible}
-        onRequestClose={() => {
-          Alert.alert("Modal has been closed.");
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View>
-          <View>
-            <Text>Hello World!</Text>
-            <Button onPress={() => setModalVisible(!modalVisible)} title="Hola"/>
-          </View>
-        </View>
-      </Modal> */}
     </View>
   );
 }
