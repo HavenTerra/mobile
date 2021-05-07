@@ -1,5 +1,4 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { useFocusEffect } from '@react-navigation/native';
+import React, { useEffect, useContext } from 'react';
 import { StyleSheet, Button, Text, View, Dimensions } from 'react-native';
 import { LineChart } from "react-native-chart-kit";
 import { getUserInfo } from "../requests/index"
@@ -21,7 +20,7 @@ const HomeScreen = ({ navigation }) => {
     dispatch({type: Actions.GET_USER_INFO, payload: data.data})
   }
 
-  useFocusEffect(() => {
+  useEffect(() => {
       getUser()      
     }, []);
 

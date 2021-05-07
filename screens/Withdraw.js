@@ -9,7 +9,7 @@ const WithdrawScreen = ({ navigation }) => {
 
   const withdraw = async () => {
     await makeWithdrawal(state.username, withdrawAmount);
-    navigation.navigate('Data');
+    navigation.push('Data');
   }
 
   return (
